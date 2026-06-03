@@ -1,0 +1,42 @@
+{
+  "zhang_san": {
+    "id": "c1f4f3ba-56b3-450d-b25f-c40bff0a2093",
+    "username": "zhang_san",
+    "password_hash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "tenant_id": "company_A",
+    "role": "user",
+    "created_at": "2026-04-04 12:24:42.097960",
+    "last_login": "2026-04-04T12:24:46.217293",
+    "is_active": true
+  },
+  "li_si": {
+    "id": "b6983a8e-6360-4915-a876-0f34858f45bf",
+    "username": "li_si",
+    "password_hash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "tenant_id": "company_B",
+    "role": "user",
+    "created_at": "2026-04-04 12:24:44.161093",
+    "last_login": null,
+    "is_active": true
+  },
+  "testuser1": {
+    "id": "69bc2ae6-efe9-4830-b60d-3bf90d36eb9b",
+    "username": "testuser1",
+    "password_hash": "85777f270ad7cf2a790981bbae3c4e484a1dc55e24a77390d692fbf1cffa12fa",
+    "tenant_id": "tenant_69bc2ae6",
+    "role": "user",
+    "created_at": "2026-04-04 13:10:34.680747",
+    "last_login": "2026-04-06T19:53:01.610259",
+    "is_active": true
+  },
+  "111": {
+    "id": "2333a960-b788-4675-b01f-03303e6d323d",
+    "username": "111",
+    "password_hash": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "tenant_id": "1",
+    "role": "user",
+    "created_at": "2026-04-04 13:15:03.211554",
+    "last_login": "2026-04-06T18:34:07.891784",
+    "is_active": true
+  }
+}

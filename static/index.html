@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能OnCall助手</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <!-- Markdown 渲染库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+    <!-- 代码高亮库（可选） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/es/highlight.min.js"></script>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">智能OnCall助手</h2>
+            </div>
+            
+            <div class="sidebar-content">
+                <button class="new-chat-btn" id="newChatBtn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>新建对话</span>
+                </button>
+                
+                <button class="evaluation-btn" id="evaluationBtn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>RAG 评测</span>
+                </button>
+                
+                <div class="chat-history-section">
+                    <div class="history-header">
+                        <span>近期对话</span>
+                    </div>
+                    <div class="chat-history-list" id="chatHistoryList">
+                        <!-- 历史对话列表将在这里动态生成 -->
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div class="sidebar-footer" id="sidebarFooter">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name" id="userName">用户名</span>
+                        <span class="user-tenant" id="userTenant">租户</span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn" title="退出登录">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12L17 7ZM4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z" fill="currentColor"/>
+                        </svg>
+                    </button>
+                </div>
+                <button class="login-btn" id="loginBtn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="currentColor"/>
+                    </svg>
+                    <span>登录</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <button class="ai-ops-top-btn" id="aiOpsSidebarBtn">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>AI Ops</span>
+            </button>
+            <div class="chat-container">
+                <div class="welcome-greeting" id="welcomeGreeting">
+                    <p>你好！我是智能Oncall小助手</p>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="input-group-wrapper">
+                        <div class="input-wrapper">
+                            <input type="text" id="messageInput" placeholder="问问智能OnCall助手" maxlength="1000" class="message-input">
+                            <div class="input-bottom-bar">
+                                <div class="tools-btn-wrapper">
+                                    <button class="tools-btn" id="toolsBtn" title="更多选项">
+                                        <svg class="tools-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                                            <circle cx="19" cy="12" r="1.5" fill="currentColor"/>
+                                            <circle cx="5" cy="12" r="1.5" fill="currentColor"/>
+                                        </svg>
+                                    </button>
+                                    <div class="tools-menu" id="toolsMenu">
+                                        <div class="tools-menu-item" id="uploadFileItem">
+                                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <span>上传文件</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="right-actions">
+                                    <div class="mode-selector-wrapper">
+                                        <button class="mode-selector-btn" id="modeSelectorBtn">
+                                            <span id="currentModeText">快速</span>
+                                            <svg class="dropdown-arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
+                                        <div class="mode-dropdown" id="modeDropdown">
+                                            <div class="dropdown-header">选择对话方式</div>
+                                            <div class="dropdown-item active" data-mode="quick">
+                                                <div class="dropdown-item-main">
+                                                    <span>快速</span>
+                                                    <span class="badge-new">新</span>
+                                                </div>
+                                                <div class="dropdown-item-sub">快速对话</div>
+                                            </div>
+                                            <div class="dropdown-item" data-mode="stream">
+                                                <div class="dropdown-item-main">
+                                                    <span>流式</span>
+                                                </div>
+                                                <div class="dropdown-item-sub">流式对话</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="send-btn-circle" id="sendButton" title="发送">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" accept=".txt,.md,.markdown" style="display: none;">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 加载遮罩层 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">智能运维分析中，请稍候...</div>
+            <div class="loading-subtext">后端正在处理，请耐心等待</div>
+        </div>
+    </div>
+
+    <!-- 登录/注册弹窗 -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h3 id="authModalTitle">登录</h3>
+                <button class="auth-close-btn" id="authCloseBtn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="auth-modal-body">
+                <form id="authForm">
+                    <div class="form-group">
+                        <label for="authUsername">用户名</label>
+                        <input type="text" id="authUsername" placeholder="请输入用户名" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="authPassword">密码</label>
+                        <input type="password" id="authPassword" placeholder="请输入密码" required>
+                    </div>
+                    <div id="registerFields" style="display: none;">
+                        <div class="form-group">
+                            <label for="authTenantId">租户ID (可选)</label>
+                            <input type="text" id="authTenantId" placeholder="留空则自动生成">
+                        </div>
+                    </div>
+                    <div class="auth-error" id="authError" style="display: none;"></div>
+                    <button type="submit" class="auth-submit-btn" id="authSubmitBtn">登录</button>
+                </form>
+                <div class="auth-switch">
+                    <span id="authSwitchText">还没有账号？</span>
+                    <a href="#" id="authSwitchLink">注册</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RAG 评测弹窗 -->
+    <div id="evaluationModal" class="auth-modal">
+        <div class="auth-modal-content evaluation-modal-content">
+            <div class="auth-modal-header">
+                <h3>RAG 评测</h3>
+                <button class="auth-close-btn" id="evalCloseBtn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="auth-modal-body">
+                <!-- 评测模式切换 -->
+                <div class="eval-tabs">
+                    <button class="eval-tab active" data-mode="manual">手动评测</button>
+                    <button class="eval-tab" data-mode="auto">自动评测</button>
+                </div>
+                
+                <!-- 手动评测表单 -->
+                <form id="evaluationForm">
+                    <div id="manualEvalForm">
+                        <div class="form-group">
+                            <label for="evalQuestion">问题 *</label>
+                            <input type="text" id="evalQuestion" placeholder="请输入问题" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="evalAnswer">答案 *</label>
+                            <textarea id="evalAnswer" placeholder="请输入 RAG 系统生成的答案" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="evalContexts">上下文 (每行一个)</label>
+                            <textarea id="evalContexts" placeholder="检索到的上下文，每行一个" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="evalGroundTruth">标准答案 (可选)</label>
+                            <textarea id="evalGroundTruth" placeholder="标准答案，用于计算 context_recall 等指标" rows="2"></textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- 自动评测配置 -->
+                    <div id="autoEvalForm" style="display: none;">
+                        <div class="auto-eval-info">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 20px; height: 20px; margin-right: 8px;">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="#1a73e8"/>
+                            </svg>
+                            <span>系统将从知识库中随机抽取文档，自动生成问答对并评测</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="autoEvalSamples">评测样本数量</label>
+                            <input type="number" id="autoEvalSamples" value="5" min="1" max="20" placeholder="1-20">
+                        </div>
+                        <div class="form-group">
+                            <label for="autoEvalSource">来源文件过滤 (可选)</label>
+                            <input type="text" id="autoEvalSource" placeholder="例如: document.pdf">
+                        </div>
+                        <div id="kbStats" class="kb-stats"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>评测指标</label>
+                        <div class="metrics-checkboxes">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="metrics" value="faithfulness" checked> 忠实度
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="metrics" value="context_precision"> 上下文精确度
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="metrics" value="context_recall"> 上下文召回率
+                            </label>
+                        </div>
+                    </div>
+                    <div class="eval-error" id="evalError" style="display: none;"></div>
+                    
+                    <!-- 进度条 -->
+                    <div id="evalProgress" class="eval-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">准备中...</div>
+                    </div>
+                    
+                    <button type="submit" class="auth-submit-btn" id="evalSubmitBtn">开始评测</button>
+                </form>
+                
+                <div id="evalResults" class="eval-results" style="display: none;">
+                    <h4>评测结果</h4>
+                    <div class="eval-scores" id="evalScores"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
